@@ -150,9 +150,6 @@ on boot
     chown system /sys/class/vts/vivo_ts_second/status/rotation
     chown system /sys/class/vts/vivo_ts_second/status/virt_prox_enable
     start touchupdate
-    start recovery_prop
-    start flash_light
-    setprop recovery.gui_initialized 1
 
 service touchupdate /system/bin/vts_app_recovery --update
     class core
