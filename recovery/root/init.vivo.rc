@@ -1,0 +1,72 @@
+import /init.recovery.svc.rc
+import /init.recovery.platform.rc
+import /init.recovery.touch.rc
+import /init.recovery.wifi.rc
+
+# +init.rc
+on early-init
+    setprop ro.boot.recovery_mode 1
+
+on init
+    mkdir /sdcard
+    mkdir /otg
+    mkdir /sideload
+    mkdir /vendor/vgc
+
+    # miaoqiang add for fork stuck because of 'out of memory' ERROR
+    write /proc/sys/vm/overcommit_memory 1
+
+# ro.boot.bootdevice=4804000.ufshc
+on property:ro.boot.usbcontroller=*
+    setprop sys.usb.controller ${ro.boot.usbcontroller}
+    #miaoqiag add for force switch usb device mode
+    # write /sys/kernel/debug/4804000.dwc3/mode "peripheral"
+    # write /sys/class/udc/${ro.boot.usbcontroller}/device/../mode peripheral
+    write /sys/class/udc/${sys.usb.controller}/device/../mode peripheral
+    
+on boot
+    start health-hal-2-1
+
+on fs
+    wait /dev/block/platform/soc/${ro.boot.bootdevice}
+    symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+
+    mount debugfs debugfs /sys/kernel/debug
+
+# Start adbd for OTA debug          11/19/2018@chenyuqin
+service recovery_adbd /sbin/recovery --adbd
+    disabled
+    seclabel u:r:recovery:s0
+
+on property:ro.boot.vc.magic=ota.
+    write /sys/class/android_usb/android0/enable 1
+    start recovery_adbd
+
+# /sys/block/<device>/queue/iosched
+# vivo.rc yangyang add begin
+on init
+    write /sys/block/sda/queue/scheduler vkyber
+    write /sys/block/sdb/queue/scheduler vkyber
+    write /sys/block/sdc/queue/scheduler vkyber
+    write /sys/block/sdd/queue/scheduler vkyber
+    write /sys/block/sde/queue/scheduler vkyber
+    write /sys/block/sdf/queue/scheduler vkyber
+# vivo yangyang add end
+
+on boot
+    # vivo fuxi modify for FuelSummary
+    chown system system /sys/kernel/debug/fuelsummary/config
+    chown system system /sys/kernel/debug/fuelsummary/custom_input
+    chown system system /sys/kernel/debug/fuelsummary/custom_ibat
+    chown system system /sys/kernel/debug/fuelsummary/custom_volt
+    chown system system /sys/kernel/debug/fuelsummary/user_custom
+    chown system root /sys/class/cms_debug/debug
+    chmod 0664 /sys/class/cms_debug/debug
+    chown system root /sys/class/cms_class/cms_enable
+    chmod 0664 /sys/class/cms_class/cms_enable
+    chown system root /sys/class/fuelsummary/custom_ibat
+
+# fuxi add for vivo super FlashCharge
+on property:sys.battery.SocDecimal=*
+    write /sys/class/power_supply/battery/soc_decimal ${sys.battery.SocDecimal}
+#end

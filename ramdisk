@@ -1,0 +1,14 @@
+libbacktrace.so
+libbootloader_message.so
+libdisplayconfig.qti.so
+libhidl-gen-utils.so
+libion.so
+libkeyutils.so
+liblogwrap.so
+liblp.so
+libops.so
+libprocessgroup.so
+libprocessgroup_setup.so
+librpmb.so
+libspl.so
+libxml2.so

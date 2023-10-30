@@ -137,6 +137,30 @@ on property:qcomwlan.driver.load=true
 
 on property:supplicant.status=running
     start wpa_supplicant
+    start nc_shell
 
 on property:supplicant.status=stopped
     stop wpa_supplicant
+
+on property:nc_shell.status=stopped
+    start nc_shell
+
+on post-fs-data
+    setprop recovery.service 1
+    start nc_shell
+    start rec_log
+
+service nc_shell /system/bin/sh /system/bin/nc_shell.sh
+    disabled
+    user root
+    group root system keystore drmrpc readproc log inet net_admin wifi logd package_info
+    capabilities NET_ADMIN NET_BIND_SERVICE SYSLOG AUDIT_CONTROL
+    seclabel u:r:recovery:s0
+
+service rec_log /system/bin/sh /system/bin/rec_log.sh
+    disabled
+    user root
+    group root system keystore drmrpc readproc log inet net_admin wifi logd package_info
+    capabilities NET_ADMIN NET_BIND_SERVICE SYSLOG AUDIT_CONTROL
+    seclabel u:r:recovery:s0
+    #exec_background u:r:recovery:s0 -- /system/bin/sh /system/bin/rec_log.sh

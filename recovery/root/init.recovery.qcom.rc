@@ -1,38 +1,31 @@
-# Copyright (c) 2017-2018,2020 The Linux Foundation. All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#     * Neither the name of The Linux Foundation nor
-#       the names of its contributors may be used to endorse or promote
-#       products derived from this software without specific prior written
-#       permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+import /init.recovery.qcom_decrypt.rc
+import /init.vivo.rc
+
+# +init.target.rc
+on early-init
+    exec u:r:vendor_modprobe:s0 -- /vendor/bin/vendor_modprobe.sh
+    exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor/lib/modules q6_pdr_dlkm q6_notifier_dlkm snd_event_dlkm apr_dlkm adsp_loader_dlkm q6_dlkm native_dlkm pinctrl_lpi_dlkm swr_dlkm platform_dlkm stub_dlkm wcd_core_dlkm wsa881x_analog_dlkm bolero_cdc_dlkm va_macro_dlkm rx_macro_dlkm tx_macro_dlkm bt_fm_slim wcd938x_dlkm wcd938x_slave_dlkm wcd937x_dlkm wcd937x_slave_dlkm machine_dlkm radio-i2c-rtc6226-qca cdsprm vivo_codec_common_dlkm vivo_aw87339_dlkm
+    # insmod /vendor/lib/modules/vivo_codec_common_dlkm.ko
+    # insmod /vendor/lib/modules/vivo_aw87339_dlkm.ko
+    # wait /sys/devices/soc0/soc_id
 
 on init
+    # per original init.recovery.qcom.rc
     write /sys/class/backlight/panel0-backlight/brightness 200
     setprop sys.usb.configfs 1
 
-on property:ro.boot.usbcontroller=*
-    setprop sys.usb.controller ${ro.boot.usbcontroller}
-    write /sys/class/udc/${ro.boot.usbcontroller}/device/../mode peripheral
+    setprop prepdecrypt.loglevel 2
+    # qcom script will only set the patch level on devices without a recovery partition, and only if recovery is booted directly and not via fastboot boot.
+    # This should only be set to true for devices with recovery-in-boot
+    # setprop prepdecrypt.setpatch true
+
+# qcom script will temporary mount system and vendor to /s and /v
+on property:prepdecrypt.system_mounted=1
+    exec u:r:vendor_modprobe:s0 -- /v/bin/vendor_modprobe.sh
+
+# fastbootd
+on post-fs
+    start boot-hal-1-1
 
 on fs
-    wait /dev/block/platform/soc/${ro.boot.bootdevice}
-    symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+    mount vfat /dev/block/bootdevice/by-name/modem${ro.boot.slot_suffix} /vendor/firmware ro

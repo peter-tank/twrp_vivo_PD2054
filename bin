@@ -1,0 +1,20 @@
+#!/system/bin/sh
+'/system/bin/apexd --unmount-all' failed : 
+'/system/bin/vdc 
+/sbin/watchdogd
+/system/bin/apexd
+/system/bin/charger
+/system/bin/e2fsck
+/system/bin/fsck.f2fs
+/system/bin/init
+/system/bin/linker64
+/system/bin/linkerconfig
+/system/bin/recovery
+/system/bin/secilc
+/system/bin/vdc
+/system/bin/watchdogd
+/vendor/bin/hw/android.hardware.camera.provider@2.4-service_64
+Calling /system/bin/vdc 
+Failed to call '/system/bin/apexd --unmount-all'
+Failed to call '/system/bin/vdc 
+restorecon failed of /system/bin/init failed

@@ -1,0 +1,14 @@
+r: /system/lib64/libbacktrace.so
+r: /system/lib64/libbootloader_message.so
+########missing libdisplayconfig.qti.so
+r: /system/lib64/libhidl-gen-utils.so
+r: /system/lib64/libion.so
+r: /system/lib64/libkeyutils.so
+r: /system/lib64/liblogwrap.so
+r: /system/lib64/liblp.so
+########missing libops.so
+r: /system/lib64/libprocessgroup.so
+r: /system/lib64/libprocessgroup_setup.so
+########missing librpmb.so
+########missing libspl.so
+r: /system/lib64/libxml2.so

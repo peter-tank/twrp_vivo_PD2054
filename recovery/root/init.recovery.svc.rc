@@ -14,32 +14,32 @@ on init
     start ashmemd
 
 on load_oem_props_action
-    load_recovery_props oem
+#    load_recovery_props oem
     setprop recovery.oem_properties.loaded 1
 
 on load_vgc_props_action
-    load_recovery_props vgc
+#    load_recovery_props vgc
     setprop recovery.vgc_properties.loaded 1
 
 on load_product_props_action
-    load_recovery_props product_props
+#    load_recovery_props product_props
     setprop recovery.product_properties.loaded 1
 
 on property:recovery.load.persist_props=1
-    load_recovery_props persist
+#    load_recovery_props persist
     setprop recovery.persist_properties.loaded 1
 
 on property:recovery.load.props=1
     trigger load_oem_props_action
     trigger load_vgc_props_action
     trigger load_product_props_action
-    load_recovery_props build_props
+#    load_recovery_props build_props
     setprop recovery.properties.loaded 1
 
 on property:recovery.load.backup_props=1
-    load_recovery_props /cache/recovery/oem.prop
-    load_recovery_props /cache/recovery/vgc.prop
-    load_recovery_props build_props
+#    load_recovery_props /cache/recovery/oem.prop
+#    load_recovery_props /cache/recovery/vgc.prop
+#    load_recovery_props build_props
     setprop recovery.backup_props.loaded 1
 
 on post-fs-data && property:ro.debuggable=1
@@ -80,18 +80,21 @@ service ashmemd /system/bin/ashmemd
 service servicemanager /system/bin/servicemanager
     disabled
     user root
+    group root readproc
     seclabel u:r:recovery:s0
 
 service hwservicemanager /system/bin/hwservicemanager
     disabled
     user root
+    group root
     onrestart setprop hwservicemanager.ready false
-    writepid /dev/cpuset/system-background/tasks
     seclabel u:r:recovery:s0
 
-service vndservicemanager /vendor/bin/vndservicemanager /dev/vndbinder
+service vndservicemanager /system/bin/vndservicemanager /dev/vndbinder
     user root
+    group root readproc
     writepid /dev/cpuset/system-background/tasks
+    shutdown critical
     seclabel u:r:recovery:s0
 
 service tombstoned /system/bin/tombstoned
@@ -117,6 +120,13 @@ service mem_info /system/bin/little_buddy --mem_info
     user root
     group root
     onrestart setprop recovery.svc.start.mem_info 0
+    seclabel u:r:recovery:s0
+
+service recovery_prop /system/bin/little_buddy --recovery_prop
+    disabled
+    user root
+    group root
+    onrestart setprop recovery.svc.start.recovery_prop 0
     seclabel u:r:recovery:s0
 
 on property:recovery.svc.start.mem_info=1
