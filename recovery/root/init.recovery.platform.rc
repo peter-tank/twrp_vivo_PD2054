@@ -3,6 +3,7 @@
 on early-boot
     start qseecomd
     start cryptfshw-1-0
+    insmod /vendor/lib/modules/vivo-fuel_summary.ko
     insmod /vendor/lib/modules/vivo-chg-cms.ko
     insmod /vendor/lib/modules/qcom-qpnp-qg.ko
     insmod /vendor/lib/modules/qpnp-smb5-main.ko

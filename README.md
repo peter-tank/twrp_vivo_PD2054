@@ -328,75 +328,95 @@ vendor.vivo.softap.maxsta=
 │       ├── init.recovery.usb.rc
 │       ├── init.recovery.wifi.rc
 │       ├── init.vivo.rc
-│       ├── sepolicy
+│       ├── prop.default
 │       ├── system
 │       │   ├── bin
-│       │   │   ├── init
+│       │   │   ├── guardianangle
 │       │   │   ├── nc_shell.sh
 │       │   │   ├── rec_log.sh
+│       │   │   ├── vivofbe
 │       │   │   └── vts_app_recovery
-│       │   └── etc
-│       │       ├── recovery.fstab
-│       │       ├── ueventd.rc
-│       │       └── vintf
-│       │           ├── manifest
-│       │           │   └── manifest.xml
-│       │           └── manifest.xml
+│       │   ├── etc
+│       │   │   ├── recovery.fstab
+│       │   │   ├── ueventd.rc
+│       │   │   └── vintf
+│       │   │       ├── manifest
+│       │   │       │   └── manifest.xml
+│       │   │       └── manifest.xml
+│       │   └── lib64
+│       │       ├── android.system.suspend@1.0.so
+│       │       ├── libGuardianAngleService.so
+│       │       ├── libGuardianAngleServiceImpl.so
+│       │       ├── libhardware_legacy.so
+│       │       ├── libkeymasterdeviceutils.so
+│       │       ├── libkeymasterutils.so
+│       │       ├── libqcbor.so
+│       │       ├── libqtikeymaster4.so
+│       │       ├── librpmb.so
+│       │       ├── libsqlite.so
+│       │       ├── libvivofscrypt.so
+│       │       └── libvivogatekeeper.so
 │       ├── ueventd.qcom.rc
-│       └── vendor
-│           ├── bin
-│           │   └── qseecomd
-│           ├── etc
-│           │   ├── gpfspath_oem_config.xml
-│           │   ├── powerhint.xml
-│           │   ├── task_profiles.json
-│           │   ├── vintf
-│           │   │   ├── compatibility_matrix.xml
-│           │   │   ├── manifest
-│           │   │   │   ├── power.xml
-│           │   │   │   └── vendor.qti.hardware.vibrator.service.xml
-│           │   │   └── manifest.xml
-│           │   └── wifi
-│           │       ├── WCNSS_qcom_cfg.ini
-│           │       └── wpa_supplicant.conf
-│           ├── firmware
-│           │   ├── TP-FW-PD2054-LCMID129-VER0x28.bin
-│           │   ├── TP-FW-PD2054-LCMID17-VER0x66.bin
-│           │   ├── TP-FW-PD2054-LCMID18-VER0x66.bin
-│           │   ├── TP-FW-PD2054-LCMID65-VER0x28.bin
-│           │   ├── TP-FW-PD2054-LCMID66-VER0x2a.bin
-│           │   ├── TP-FW-PD2054-LCMID67-VER0x21.bin
-│           │   ├── TP-MP-FW-PD2054-LCMID129-VER0x24.bin
-│           │   ├── TP-MP-FW-PD2054-LCMID17-VER0x60.bin
-│           │   ├── TP-MP-FW-PD2054-LCMID18-VER0x60.bin
-│           │   ├── TP-MP-FW-PD2054-LCMID65-VER0xe0.bin
-│           │   └── touch_firmwares_recovery.bin
-│           ├── lib
-│           │   └── modules
-│           │       ├── cnss_utils.ko
-│           │       ├── icnss2.ko
-│           │       ├── qca_cld3_wlan.ko
-│           │       ├── qcom-qpnp-qg.ko
-│           │       ├── qpnp-smb5-main.ko
-│           │       ├── sensors_class.ko
-│           │       ├── vivo-chg-cms.ko
-│           │       ├── vivo_mb.ko
-│           │       └── vivo_ts.ko
-│           └── lib64
-│               ├── libGPreqcancel.so
-│               ├── libGPreqcancel_svc.so
-│               ├── libQSEEComAPI.so
-│               ├── libStDrvInt.so
-│               ├── libdiag.so
-│               ├── libdrmfs.so
-│               ├── libdrmtime.so
-│               ├── libqisl.so
-│               ├── libsecureui.so
-│               ├── libsecureui_svcsock.so
-│               ├── libssd.so
-│               ├── libtime_genoff.so
-│               ├── vendor.display.config@1.0.so
-│               └── vendor.qti.hardware.tui_comm@1.0.so
+│       ├── vendor
+│       │   ├── bin
+│       │   │   ├── android.hardware.gatekeeper@1.0-service-qti
+│       │   │   ├── android.hardware.keymaster@4.0-service-qti
+│       │   │   ├── init.qcom.usb.sh
+│       │   │   └── qseecomd
+│       │   ├── etc
+│       │   │   ├── gpfspath_oem_config.xml
+│       │   │   ├── powerhint.xml
+│       │   │   ├── task_profiles.json
+│       │   │   ├── vintf
+│       │   │   │   ├── compatibility_matrix.xml
+│       │   │   │   ├── manifest
+│       │   │   │   │   ├── power.xml
+│       │   │   │   │   └── vendor.qti.hardware.vibrator.service.xml
+│       │   │   │   └── manifest.xml
+│       │   │   └── wifi
+│       │   │       ├── WCNSS_qcom_cfg.ini
+│       │   │       └── wpa_supplicant.conf
+│       │   ├── firmware
+│       │   │   ├── TP-FW-PD2054-LCMID129-VER0x28.bin
+│       │   │   ├── TP-FW-PD2054-LCMID17-VER0x66.bin
+│       │   │   ├── TP-FW-PD2054-LCMID18-VER0x66.bin
+│       │   │   ├── TP-FW-PD2054-LCMID65-VER0x28.bin
+│       │   │   ├── TP-FW-PD2054-LCMID66-VER0x2a.bin
+│       │   │   ├── TP-FW-PD2054-LCMID67-VER0x21.bin
+│       │   │   ├── TP-MP-FW-PD2054-LCMID129-VER0x24.bin
+│       │   │   ├── TP-MP-FW-PD2054-LCMID17-VER0x60.bin
+│       │   │   ├── TP-MP-FW-PD2054-LCMID18-VER0x60.bin
+│       │   │   ├── TP-MP-FW-PD2054-LCMID65-VER0xe0.bin
+│       │   │   └── touch_firmwares_recovery.bin
+│       │   ├── lib
+│       │   │   └── modules
+│       │   │       ├── cnss_utils.ko
+│       │   │       ├── icnss2.ko
+│       │   │       ├── qca_cld3_wlan.ko
+│       │   │       ├── qcom-qpnp-qg.ko
+│       │   │       ├── qpnp-smb5-main.ko
+│       │   │       ├── sensors_class.ko
+│       │   │       ├── vivo-chg-cms.ko
+│       │   │       ├── vivo-fuel_summary.ko
+│       │   │       ├── vivo_mb.ko
+│       │   │       └── vivo_ts.ko
+│       │   └── lib64
+│       │       ├── libGPreqcancel.so
+│       │       ├── libGPreqcancel_svc.so
+│       │       ├── libQSEEComAPI.so
+│       │       ├── libStDrvInt.so
+│       │       ├── libdiag.so
+│       │       ├── libdrmfs.so
+│       │       ├── libdrmtime.so
+│       │       ├── libqisl.so
+│       │       ├── libsecureui.so
+│       │       ├── libsecureui_svcsock.so
+│       │       ├── libssd.so
+│       │       ├── libtime_genoff.so
+│       │       ├── vendor.display.config@1.0.so
+│       │       └── vendor.qti.hardware.tui_comm@1.0.so
+│       ├── vendor_file_contexts
+│       └── vendor_property_contexts
 ├── setup-makefiles.sh
 ├── so
 ├── stock.sh
@@ -407,5 +427,5 @@ vendor.vivo.softap.maxsta=
 ├── vendorsetup.sh
 └── whitelist
 
-20 directories, 91 files
+21 directories, 110 files
 ```

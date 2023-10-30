@@ -267,13 +267,13 @@ _ll="${1}";
 mkdir -p "$_ll" && cp -varf /tmp/ls_*.log "$_ll";
 }
 
-# set -x;
-vib 2000,5;
 test "$(getprop nc_shell.status)" = "running" && exit 1;
 trap bbye EXIT;
 # ps -Af | grep $0 | grep  -qvF "grep" 2>/dev/null && exit 1;
 setprop nc_shell.status "running";
 
+#set -x;
+vib 2000,5;
 HEADER_LN="$(grep -nm1 -F "# DO NOT T0UCH THIS LINE" "$0" | sed -e 's/^\([0-9]*\):.*$/\1/')"; # cut header line number in this file for building the new .src config file.
 test -f "/sys/class/rtc/rtc0/since_epoch" && _tdiff="$(( ($(date "+%s" 2>/dev/null) - $(cat /sys/class/rtc/rtc0/since_epoch)) ))";
 test "${_tdiff:-10}" -lt "10" && DO_OFFSET=true || DO_OFFSET=false;
