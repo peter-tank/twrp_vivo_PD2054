@@ -296,35 +296,35 @@ TARGET_USES_NEW_ION_API := true
 # TWRP_CUSTOM_KEYBOARD := $(DEVICE_PATH)/recovery/hardwarekeyboard.cpp
 TW_NO_EXFAT := true
 TW_PREPARE_DATA_MEDIA_EARLY := true
-TW_HAS_EDL_MODE := true
+# TW_HAS_EDL_MODE := true
 # TWRP_REQUIRED_MODULES += init.recovery.usb.rc
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 
 # Statusbar icons flags
-TW_Y_OFFSET := 120
-TW_H_OFFSET := -120
-TW_FRAMERATE := 60
-TW_STATUS_ICONS_ALIGN := center
-TW_CUSTOM_CPU_POS := 50
-TW_CUSTOM_CLOCK_POS := 300
-TW_CUSTOM_BATTERY_POS := 800
+TW_Y_OFFSET := 80
+TW_H_OFFSET := -80
+#TW_FRAMERATE := 60
+#TW_STATUS_ICONS_ALIGN := center
+#TW_CUSTOM_CPU_POS := 50
+#TW_CUSTOM_CLOCK_POS := 300
+#TW_CUSTOM_BATTERY_POS := 800
 # Clock offset $(( ($(date +%s) - $(cat /sys/class/rtc/rtc0/since_epoch)) ))
 TW_QCOM_ATS_OFFSET := 1614645734000
 
 # Encryption support
 # libcryptfsfde libgpt_twrp
 TW_INCLUDE_CRYPTO := true
-#TW_INCLUDE_CRYPTO_FBE := true
-#TW_INCLUDE_FBE_METADATA_DECRYPT := true
+# TW_INCLUDE_CRYPTO_FBE := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
 
 #TARGET_HW_DISK_ENCRYPTION := true
-#TW_INCLUDE_FBE := true
+# TW_INCLUDE_FBE := true
 # libvolddecrypt
 # TW_CRYPTO_USE_SYSTEM_VOLD := true
 
 # Keystore
-#TARGET_PROVIDES_KEYMASTER := true
-#TARGET_KEYMASTER_WAIT_FOR_QSEE := true
+# TARGET_PROVIDES_KEYMASTER := true
+# TARGET_KEYMASTER_WAIT_FOR_QSEE := true
 
 # Resetprop(Vendor init) and Magiskboot, libresetprop
 TARGET_UNIFIED_DEVICE := true

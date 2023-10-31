@@ -19,7 +19,6 @@ on init
 # ro.boot.bootdevice=4804000.ufshc
 on property:ro.boot.usbcontroller=*
     setprop sys.usb.controller ${ro.boot.usbcontroller}
-    setprop vendor.usb.controller ${ro.boot.usbcontroller}
     #miaoqiag add for force switch usb device mode
     # write /sys/kernel/debug/4804000.dwc3/mode "peripheral"
     # write /sys/class/udc/${ro.boot.usbcontroller}/device/../mode peripheral
