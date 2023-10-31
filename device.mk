@@ -99,6 +99,11 @@ PRODUCT_PACKAGES += \
 	libhidltransport \
 	libhwbinder
 
+# USE_QTI_HAPTICS Vibrator
+# PRODUCT_PACKAGES += \
+    android.hardware.vibrator@1.0-impl \
+    android.hardware.vibrator@1.0-service
+
 # Power
 #RODUCT_PACKAGES += \
 #	android.hardware.power-service-qti
