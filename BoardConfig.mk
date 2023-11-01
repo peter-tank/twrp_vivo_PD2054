@@ -252,7 +252,6 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 0
 TW_USE_FSCRYPT_POLICY := 2
 BOARD_USES_METADATA_PARTITION := true
 
-# TARGET_RECOVERY_QCOM_RTC_FIX := true
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml
 DEVICE_MATRIX_FILE := $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/compatibility_matrix.xml
 
@@ -309,21 +308,26 @@ TW_H_OFFSET := -80
 #TW_CUSTOM_CPU_POS := 50
 #TW_CUSTOM_CLOCK_POS := 300
 #TW_CUSTOM_BATTERY_POS := 800
+
+BOARD_USES_QCOM_HARDWARE := true
+# .rc: /mnt/vendor/persist/time/ats_*  < /persist/time
+# /data/vendor/time
+TARGET_RECOVERY_QCOM_RTC_FIX := true
 # Clock offset $(( ($(date +%s) - $(cat /sys/class/rtc/rtc0/since_epoch)) ))
 TW_QCOM_ATS_OFFSET := 1614645734000
+# TW_CLOCK_OFFSET := 161465734
+# TW_EXCLUDE_TZDATA := true
 
 # Encryption support
 # libcryptfsfde libgpt_twrp
 TW_INCLUDE_CRYPTO := true
-# TW_INCLUDE_CRYPTO_FBE := true
+TW_INCLUDE_FBE := true
+TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
 
-#TARGET_HW_DISK_ENCRYPTION := true
-# TW_INCLUDE_FBE := true
+# TARGET_HW_DISK_ENCRYPTION := true
 # libvolddecrypt
-# TW_CRYPTO_USE_SYSTEM_VOLD := true
-
-# Keystore
+# TW_CRYPTO_USE_SYSTEM_VOLD := qseecomd hwservicemanager keymaster-3-0
 # TARGET_PROVIDES_KEYMASTER := true
 # TARGET_KEYMASTER_WAIT_FOR_QSEE := true
 
