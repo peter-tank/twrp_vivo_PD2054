@@ -22,7 +22,7 @@ on init
     #mkdir /data/vendor/tombstones/rfs 0777 rfs system
     #mkdir /data/vendor/tombstones/rfs/modem 0777 rfs system
 
-    mkdir /vendor/firmware 0777 root shell
+    #mkdir /vendor/firmware 0777 root shell
     mkdir /vendor/rfs 0777 root shell
     mkdir /vendor/rfs/msm 0777 root shell
     mkdir /vendor/rfs/msm/mpss 0777 root shell
@@ -31,11 +31,19 @@ on init
 
     symlink /data/vendor/tombstones/rfs/modem /vendor/rfs/msm/mpss/ramdumps
     symlink /firmware /vendor/rfs/msm/mpss/readonly/firmware
-    symlink /mnt/vendor/persist/rfs/msm/mpss /vendor/rfs/msm/mpss/readwrite
-    symlink /mnt/vendor/persist/rfs/shared /vendor/rfs/msm/mpss/shared
-    symlink /mnt/vendor/persist/hlos_rfs/shared /vendor/rfs/msm/mpss/hlos
-    symlink /vendor/firmware /vendor/rfs/msm/mpss/readonly/vendor/firmware
-    symlink /vendor/firmware_mnt /vendor/rfs/msm/mpss/readonly/vendor/firmware_mnt
+    symlink /persist /mnt/vendor/persist
+    symlink /persist/rfs/msm/mpss /vendor/rfs/msm/mpss/readwrite
+    symlink /persist/rfs/shared /vendor/rfs/msm/mpss/shared
+    symlink /persist/hlos_rfs/shared /vendor/rfs/msm/mpss/hlos
+    #symlink /vendor/firmware /vendor/rfs/msm/mpss/readonly/vendor/firmware
+    #symlink /vendor/firmware_mnt /vendor/rfs/msm/mpss/readonly/vendor/firmware_mnt
+    mkdir /firmware_mnt 0777 root shell
+    chmod 0777 /firmware_mnt
+    chown root shell /firmware_mnt
+    symlink /firmware_mnt /vendor/firmware
+    symlink /firmware_mnt /vendor/rfs/msm/mpss/readonly/vendor/firmware
+    symlink /firmware_mnt /vendor/rfs/msm/mpss/readonly/vendor/firmware_mnt
+    symlink /firmware_mnt /vendor/rfs/msm/mpss/readonly/firmware
 
     #mkdir /data/misc/dhcp 0770 dhcp dhcp
     #chown dhcp dhcp /data/misc/dhcp

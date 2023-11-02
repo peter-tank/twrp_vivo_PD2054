@@ -28,4 +28,4 @@ on post-fs
     start boot-hal-1-1
 
 on fs
-    mount vfat /dev/block/bootdevice/by-name/modem${ro.boot.slot_suffix} /vendor/firmware ro
+    mount vfat /dev/block/bootdevice/by-name/modem /firmware_mnt ro

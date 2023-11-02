@@ -11,7 +11,9 @@ on init
     mkdir /sdcard
     mkdir /otg
     mkdir /sideload
-    mkdir /vendor/vgc
+    #mkdir /vendor/vgc
+    mkdir /vgc
+    symlink /vgc /vendor/vgc
 
     # miaoqiang add for fork stuck because of 'out of memory' ERROR
     write /proc/sys/vm/overcommit_memory 1
