@@ -1,4 +1,3 @@
-#!/system/bin/sh
 #!/vendor/bin/sh
 '/system/bin/apexd --unmount-all' failed : 
 '/system/bin/vdc 

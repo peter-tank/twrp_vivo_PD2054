@@ -3,7 +3,7 @@ r: /system/lib64/android.hardware.keymaster@3.0.so
 r: /system/lib64/android.hardware.keymaster@4.0.so
 r: /system/lib64/android.hardware.keymaster@4.1.so
 r: /system/lib64/android.hardware.weaver@1.0.so
-r: /system/lib64/android.system.suspend@1.0.so
+########missing android.system.suspend@1.0.so
 r: /system/lib64/libandroidicu.so
 r: /system/lib64/libbacktrace.so
 r: /system/lib64/libbootloader_message.so

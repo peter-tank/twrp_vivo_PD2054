@@ -335,14 +335,11 @@ vendor.vivo.softap.maxsta=
 │       │   │   ├── guardianangle
 │       │   │   ├── init
 │       │   │   ├── make_f2fs
-│       │   │   ├── nc_shell.sh
-│       │   │   ├── rec_log.sh
 │       │   │   ├── sload_f2fs
 │       │   │   ├── vivofbe
 │       │   │   └── vts_app_recovery
 │       │   ├── etc
 │       │   │   ├── prop.default
-│       │   │   ├── recovery.fstab
 │       │   │   ├── ueventd.rc
 │       │   │   └── vintf
 │       │   │       ├── manifest
@@ -426,10 +423,8 @@ vendor.vivo.softap.maxsta=
 ├── system.prop
 ├── twrp_PD2054.mk
 ├── vendor.prop
-├── vendor_file_contexts
-├── vendor_property_contexts
 ├── vendorsetup.sh
 └── whitelist
 
-21 directories, 114 files
+21 directories, 109 files
 ```
