@@ -37,71 +37,66 @@ ENABLE_SCHEDBOOST := true
 OVERRIDE_TARGET_FLATTEN_APEX := true
 
 # Bootloader
+# TARGET_NO_BOOTLOADER := true
+# TARGET_USES_UEFI := true
 TARGET_BOOTLOADER_BOARD_NAME := holi
-TARGET_NO_BOOTLOADER := true
 # UEFI (Unified Extensible Firmware Interface)
 # PBL > BOOTROM > XBL(Preloader: QSEE{keymaster}, devcfg, abl:{to.bootmode=?Charger}, rpm) > QSEE > \
 # ABL (LK: fastboot)> Kernel > Android: Init, Zygote, System_server
-TARGET_USES_UEFI := true
 
 # Display
 TARGET_SCREEN_DENSITY := 480
 # TARGET_RECOVERY_DENSITY := xxhdpi
 # xxhdpi 2408x1080 IPS/TFT 60,90Hz HDR10,HLG
 
-#Generate DTBO image
-# BOARD_KERNEL_SEPARATED_DTBO := true
-SYSTEMEXT_SEPARATE_PARTITION_ENABLE = true
-
-# Dynamic partitions
-# PRODUCT_BUILD_SUPER_PARTITION := false
-
-BOARD_DYNAMIC_PARTITION_ENABLE := true
 ### Dynamic partition Handling
-ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
-BOARD_ODM_FILE_SYSTEM_SIZE := 1150976
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 5117816832
-BOARD_PRODUCTIMAGE_FILE_SYSTEM_SIZE := 176594944
-BOARD_VENDORIMAGE_FILE_SYSTEM_SIZE := 1160421376
-BOARD_SYSTEMEXTIMAGE_PARTITION_SIZE := 227782656
+ifneq ($(strip $(PRODUCT_USE_DYNAMIC_PARTITIONS)),true)
+BOARD_ODM_PARTITION_SIZE := 1150976 # 0x119000
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 5117816832 # 0x1310BB000
+BOARD_PRODUCTIMAGE_PARTITION_SIZE := 176594944 # 0xA86A000
+BOARD_VENDORIMAGE_PARTITION_SIZE := 1160421376 # 0x452AA000
+BOARD_SYSTEMEXTIMAGE_PARTITION_SIZE := 227782656 # 0xD93B000
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 TARGET_NO_RECOVERY := true
 BOARD_USES_RECOVERY_AS_BOOT := true
 else
 # Define the Dynamic Partition sizes and groups.
 ifeq ($(ENABLE_VIRTUAL_AB), true)
-     BOARD_SUPER_PARTITION_SIZE := 9126805504 # TODO: Fix hardcoded value
+    BOARD_SUPER_PARTITION_SIZE := 9126805504 # 0x220000000
+    BOARD_SUPER_PARTITION_ERROR_LIMIT := 9126805504
 else
-     BOARD_SUPER_PARTITION_SIZE := 9126805504 # TODO: Fix hardcoded value
+    BOARD_SUPER_PARTITION_SIZE := 9126805504 # 0x220000000
+    BOARD_SUPER_PARTITION_ERROR_LIMIT := 9126805504
 endif
 
-BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor product odm system_ext
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200 # TODO: Fix hardcoded value
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 100663296
+BOARD_SUPER_PARTITION_GROUPS := vivo_dynamic_partitions
+BOARD_VIVO_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor product odm system_ext
+BOARD_VIVO_DYNAMIC_PARTITIONS_SIZE := 9122611200 # 0x21FC00000 # BOARD_SUPER_PARTITION_SIZE - 0x400000 4M(over head)
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 100663296 # 0x6000000
 BOARD_EXT4_SHARE_DUP_BLOCKS := true
-    ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
-        # Enable DTBO for recovery image
-        BOARD_INCLUDE_RECOVERY_DTBO := true
-    endif
 endif
 ### Dynamic partition Handling
 
+BOARD_PARTITION_LIST := $(call to-upper, $(BOARD_VIVO_DYNAMIC_PARTITIONS_PARTITION_LIST))
+$(foreach p, $(BOARD_PARTITION_LIST), $(eval BOARD_$(p)IMAGE_FILE_SYSTEM_TYPE := ext4))
+$(foreach p, $(BOARD_PARTITION_LIST), $(eval TARGET_COPY_OUT_$(p) := $(call to-lower, $(p))))
+# SYSTEMEXT_SEPARATE_PARTITION_ENABLE = true
+# BOARD_USES_PRODUCTIMAGE := true
+
 # Partitions
 BOARD_HAS_LARGE_FILESYSTEM := true
-BOARD_USES_PRODUCTIMAGE := true
-BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296
+BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296 # 0x6000000
+BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 0x06000000
+BOARD_METADATAIMAGE_PARTITION_SIZE := 16777216 # 0x1000000
+BOARD_DTBOIMG_PARTITION_SIZE := 25165824 # 0x1800000
 
-BOARD_USERDATAIMAGE_FILE_SYSTEM_SIZE := 116731424768
-BOARD_CACHEIMAGE_FILE_SYSTEM_SIZE := 268435456
-BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
+TARGET_USERIMAGES_USE_F2FS := true
+TARGET_USERIMAGES_USE_EXT4 := true
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
+BOARD_USERDATAIMAGE_FILE_SYSTEM_SIZE := 116731424768 # 0x1B2DBC3000
+
+BOARD_CACHEIMAGE_FILE_SYSTEM_SIZE := 268435456 # 0x10000000
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-
-BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
-BOARD_SYSTEMEXTIMAGE_PARTITION_TYPE := ext4
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_ODM_FILE_SYSTEM_TYPE := ext4
-BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # boot.img kernel_size: 0x8=0x027EF200(40M), ramdisk_size: 0xc=0x0C709B, os_ver: 0x10=0x16000172, header_size: 0x14=0x062C header_ver: 0x28=0x03
 # recovery.img cmdline 0x2c
@@ -112,7 +107,19 @@ BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 # from vendor_boot.img, recovery.img
 # Kernel
 TARGET_NO_KERNEL := false
-BOARD_KERNEL_CMDLINE := console=null earlycon=null androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 androidboot.usbcontroller=4e00000.dwc3 swiotlb=0 loop.max_part=7 cgroup.memory=nokmem,nosocket product.version=PD2054_A_1.20.10 fingerprint.abbr=11/RP1A.200720.012 region_ver=W10 buildvariant=user androidboot.securebootkeyhash=2c0a52ffbd8db687b56f6a98d8840f46597a4dde6d9dc8d00039873ce6d74f60 androidboot.securebootkeyver=4
+BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200n8 earlycon=null androidboot.hardware=qcom
+BOARD_KERNEL_CMDLINE += androidboot.console=ttyMSM0 androidboot.memcg=1
+BOARD_KERNEL_CMDLINE += lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1
+BOARD_KERNEL_CMDLINE += androidboot.usbcontroller=4e00000.dwc3 swiotlb=0
+BOARD_KERNEL_CMDLINE += loop.max_part=7 cgroup.memory=nokmem,nosocket
+BOARD_KERNEL_CMDLINE += product.version=PD2054_A_1.20.10 fingerprint.abbr=11/RP1A.200720.012 region_ver=W10
+BOARD_KERNEL_CMDLINE += buildvariant=user
+BOARD_KERNEL_CMDLINE += androidboot.securebootkeyhash=2c0a52ffbd8db687b56f6a98d8840f46597a4dde6d9dc8d00039873ce6d74f60 androidboot.securebootkeyver=4
+BOARD_KERNEL_CMDLINE += androidboot.selinux=disabled
+
+BOARD_KERNEL_IMAGE_NAME := Image.gz
+TARGET_KERNEL_ARCH := arm64
+TARGET_KERNEL_HEADER_ARCH := arm64
 
 BOARD_KERNEL_PAGESIZE := 4096 # 0x1000, 4k byte
 BOARD_FLASH_BLOCK_SIZE := 0x40000  # (BOARD_KERNEL_PAGESIZE * 64)
@@ -125,25 +132,36 @@ BOARD_KERNEL_BASE          := 0x00000000
 BOARD_KERNEL_TAGS_OFFSET   := 0x00000100
 BOARD_KERNEL_OFFSET        := 0x00008000
 BOARD_RAMDISK_OFFSET       := 0x01000000
-#Disable appended dtb
+
+# append dtb in image
 TARGET_KERNEL_APPEND_DTB := false
+BOARD_KERNEL_SEPARATED_DTBO := false
 # Set Header version for bootimage
 ifneq ($(strip $(TARGET_KERNEL_APPEND_DTB)),true)
-#Enable dtb in boot image and Set Header version
-BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_BOOTIMG_HEADER_VERSION := 3
+else
+# Use GKI (requires the android-4.19 or android-5.4 kernel) but don't use A/B updates can specify a recovery image by using boot image version 3 for the boot image and boot image version 2 for the recovery image.
+BOARD_BOOTIMG_HEADER_VERSION := 2
+BOARD_DTB_OFFSET           := 0x01F00000
+BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/prebuilt/dtb.img:dtb.img
 TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
-else
-BOARD_BOOTIMG_HEADER_VERSION := 2
-# include dtbo section
+# Append DTBO to boot image
 # per Non-A/B devices using header_version, not support in v3
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
-BOARD_MKBOOTIMG_ARGS += --recovery_dtbo $(BOARD_PREBUILT_DTBOIMAGE)
+# TODO: --second_offset for v2 boot image
+    ifeq ($(BOARD_KERNEL_SEPARATED_DTBO),true)
+        # Enable DTBO for recovery image
+        BOARD_INCLUDE_RECOVERY_DTBO := true
+        PRODUCT_COPY_FILES += \
+            $(DEVICE_PATH)/prebuilt/dtbo.img:dtbo.img
+        BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
+        BOARD_MKBOOTIMG_ARGS += --recovery_dtbo $(BOARD_PREBUILT_DTBOIMAGE)
+    endif
 endif
 
-BOARD_DTB_OFFSET           := 0x01F00000
 BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
 BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
@@ -151,21 +169,22 @@ BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --kernel_offset $(BOARD_KERNEL_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
-BOARD_KERNEL_IMAGE_NAME := Image.gz
-TARGET_COMPILE_WITH_MSM_KERNEL := true
-TARGET_KERNEL_ADDITIONAL_FLAGS := DTC_EXT=$(shell pwd)/prebuilts/misc/linux-x86/dtc/dtc LLVM=1
-TARGET_KERNEL_CLANG_COMPILE := true
-TARGET_KERNEL_CLANG_VERSION := r383902
-TARGET_KERNEL_ARCH := arm64
-TARGET_KERNEL_HEADER_ARCH := arm64
-TARGET_KERNEL_CONFIG := PD2054_defconfig
-# kernel/oneplus/sm4350
-TARGET_KERNEL_SOURCE := kernel/vivo/PD2054
 
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
+# Compile without full kernel source
+TARGET_COMPILE_WITH_MSM_KERNEL := false
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image.gz
+endif
+
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+TARGET_KERNEL_ADDITIONAL_FLAGS := DTC_EXT=$(shell pwd)/prebuilts/misc/linux-x86/dtc/dtc LLVM=1
+TARGET_KERNEL_CLANG_COMPILE := true
+# TARGET_KERNEL_CLANG_VERSION := r383902
+TARGET_KERNEL_CONFIG := PD2054_defconfig
+# kernel/oneplus/sm4350
+TARGET_KERNEL_SOURCE := kernel/vivo/PD2054
 endif
 
 # build vendor/lib/modules
@@ -174,12 +193,8 @@ NEED_KERNEL_MODULE_RECOVERY := true
 # dyna load kernerl module(GKI)
 KERNEL_MODULES_INSTALL := dlkm
 
-
 # Use mke2fs to create ext4 images
 TARGET_USES_MKE2FS := true
-
-TARGET_COPY_OUT_VENDOR := vendor
-TARGET_COPY_OUT_PRODUCT := product
 
 # APEX image
 DEXPREOPT_GENERATE_APEX_IMAGE := true
@@ -201,8 +216,6 @@ BOOT_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 
 # Recovery
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_USE_F2FS := true
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/devices/virtual/thermal/thermal_zone50/temp"
 BOARD_SUPPRESS_SECURE_ERASE := true
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/fstab/recovery.fstab
@@ -226,7 +239,7 @@ BOARD_AVB_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 # default: 0, should be increased on a regular basis.
 BOARD_AVB_ROLLBACK_INDEX := 0
 # BOARD_AVBTOOL_BOOT_ADD_HASH_FOOTER_ARGS += --salt xxxx
-# BOARD_AVBTOOL_BOOT_ADD_HASH_FOOTER_ARGS += --hash_algorithm xxx
+# BOARD_AVBTOOL_BOOT_ADD_HASH_FOOTER_ARGS += --hash_algorithm sha256
 
 # MakeDisabledVbmetaImage: 2
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
@@ -251,6 +264,7 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 0
 # 2: Rolling back check point support
 TW_USE_FSCRYPT_POLICY := 2
 BOARD_USES_METADATA_PARTITION := true
+BOARD_ROOT_EXTRA_FOLDERS += metadata
 
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml
 DEVICE_MATRIX_FILE := $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/compatibility_matrix.xml
@@ -271,7 +285,7 @@ TW_USE_LEDS_HAPTICS := true
 # TW_SUPPORT_INPUT_AIDL_HAPTICS := false
 TW_SECONDARY_BRIGHTNESS_PATH := "/sys/devices/platform/soc/5e00000.qcom\x2mdss_mdp/backlight/panel0-backlight/brightness"
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
-TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
+# TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
 TW_MAX_BRIGHTNESS := 4095
 TW_DEFAULT_BRIGHTNESS := 2000
 TW_EXCLUDE_SUPERSU := true
@@ -282,7 +296,7 @@ TW_CUSTOM_BATTERY_PATH := "/sys/class/power_supply/battery"
 # Overlay graphics(DRM device) need getMakeVars(ctx, 
 # TW_TARGET_USES_QCOM_BSP := true
 # TARGET_USES_QCOM_BSP := true
-BOARD_USES_VENDOR_QCOM := true
+# BOARD_USES_VENDOR_QCOM := true
 
 # HAVE_SYNAPTICS_I2C_RMI4_FW_UPGRADE   := true
 # USE_DEVICE_SPECIFIC_QCOM_PROPRIETARY := true

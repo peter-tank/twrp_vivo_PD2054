@@ -15,9 +15,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 #PRODUCT_COPY_FILES += \
 #    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/recovery/root,recovery/root) \
 
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/dtb.img:dtb.img
-
 #PRODUCT_COPY_FILES += \
 #    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/prebuilt,$(OUT_DIR)/target/product/PD2054)
 
@@ -29,6 +26,8 @@ $(call inherit-product, device/vivo/PD2054/device.mk)
 
 # VNDK
 PRODUCT_TARGET_VNDK_VERSION := 30
+
+PRODUCT_CHARACTERISTICS := nosdcard
 
 PRODUCT_DEVICE := PD2054
 PRODUCT_NAME := twrp_PD2054

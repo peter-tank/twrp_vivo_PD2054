@@ -51,6 +51,9 @@ AB_OTA_PARTITIONS := \
 # vendor and odm and we also dont want to AB update them
 TARGET_ENFORCE_AB_OTA_PARTITION_LIST := true
 
+#Add non-hlos files to ota packages
+ADD_RADIO_FILES := true
+
 # PRODUCT_PACKAGES += \
         bootctrl.holi \
         bootctrl.holi.recovery
@@ -105,7 +108,7 @@ PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-service
 
 # Power
-#RODUCT_PACKAGES += \
+# PRODUCT_PACKAGES += \
 #	android.hardware.power-service-qti
 
 PRODUCT_COPY_FILES += \
@@ -129,8 +132,19 @@ ifeq ($(BOARD_USES_QCOM_DECRYPTION),true)
 endif
 
 # Recovery Modules
-PRODUCT_HOST_PACKAGES += \
-	libandroidicu
+ PRODUCT_HOST_PACKAGES += \
+        libandroidicu
+
+PRODUCT_PACKAGES += \
+        libsqlite
+
+PRODUCT_PACKAGES += \
+        sg_write_buffer \
+        f2fs_io \
+        check_f2fs
+
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+PRODUCT_BUILD_SUPER_PARTITION := false
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
@@ -151,15 +165,18 @@ endif
 
 # Apex libraries
 PRODUCT_COPY_FILES += \
-	$(OUT_DIR)/target/product/PD2054/obj/SHARED_LIBRARIES/libandroidicu_intermediates/libandroidicu.so:$(TARGET_COPY_OUT_RECOVERY)/root/system/lib64/libandroidicu.so
+	$(OUT_DIR)/target/product/PD2054/obj/SHARED_LIBRARIES/libandroidicu_intermediates/libandroidicu.so:$(TARGET_COPY_OUT_RECOVERY)/root/system/lib64/libandroidicu.so \
+	$(OUT_DIR)/target/product/PD2054/obj/SHARED_LIBRARIES/libsqlite_intermediates/libsqlite.so:$(TARGET_COPY_OUT_RECOVERY)/root/system/lib64/libsqlite.so
 
 TARGET_RECOVERY_DEVICE_MODULES += \
 	libandroidicu \
+	libsqlite \
 	libcap \
 	libion \
 	libxml2
 
 RECOVERY_LIBRARY_SOURCE_FILES += \
+	$(TARGET_OUT_SHARED_LIBRARIES)/libsqlite.so \
 	$(TARGET_OUT_SHARED_LIBRARIES)/libcap.so \
 	$(TARGET_OUT_SHARED_LIBRARIES)/libion.so \
 	$(TARGET_OUT_SHARED_LIBRARIES)/libxml2.so
@@ -167,8 +184,7 @@ RECOVERY_LIBRARY_SOURCE_FILES += \
 TARGET_RECOVERY_DEVICE_MODULES += \
     libbinder \
     libgui \
-    libui \
-    qseecomd
+    libui
 
 # TW_CRYPTO_USE_SYSTEM_VOLD := qseecomd hwservicemanager keymaster-4-0
 

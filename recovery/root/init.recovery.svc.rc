@@ -87,21 +87,18 @@ service ashmemd /system/bin/ashmemd
 service servicemanager /system/bin/servicemanager
     disabled
     user root
-    group root readproc
     seclabel u:r:recovery:s0
 
 service hwservicemanager /system/bin/hwservicemanager
     disabled
     user root
-    group root
     onrestart setprop hwservicemanager.ready false
+    writepid /dev/cpuset/system-background/tasks
     seclabel u:r:recovery:s0
 
 service vndservicemanager /system/bin/vndservicemanager /dev/vndbinder
     user root
-    group root readproc
     writepid /dev/cpuset/system-background/tasks
-    shutdown critical
     seclabel u:r:recovery:s0
 
 service tombstoned /system/bin/tombstoned
